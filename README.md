@@ -10,6 +10,7 @@ pip install pydub numpy matplotlib scipy PyQt5
 
 ### FFMPEG (if needed)
 Might also additionally have to install ffmpeg
+
 For Windows
 - Download [FFMPEG Binary](https://github.com/BtbN/FFmpeg-Builds/releases)
 - Add to PATH in Environment Variables
