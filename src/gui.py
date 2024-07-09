@@ -1,8 +1,11 @@
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QRadioButton, QButtonGroup
+from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from src.preprocessing import AudioPreprocessor
+from src.filters.parallel import ParallelFilter
+from src.filters.cascade import CascadeFilter
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
@@ -22,21 +25,53 @@ class GraphicEqualizer(QMainWindow):
         self.load_button = QPushButton('Load Audio File')
         self.load_button.clicked.connect(self.load_audio)
 
+        self.apply_button = QPushButton('Apply Filter')
+        self.apply_button.clicked.connect(self.apply_filter)
+
+        self.slider = QSlider(Qt.Horizontal)
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(10000)
+        self.slider.setValue(1000)
+        self.slider.setTickPosition(QSlider.TicksBelow)
+        self.slider.setTickInterval(1000)
+
+        self.filter_type_group = QButtonGroup(self)
+        self.parallel_radio = QRadioButton('Parallel')
+        self.cascade_radio = QRadioButton('Cascade')
+        self.filter_type_group.addButton(self.parallel_radio)
+        self.filter_type_group.addButton(self.cascade_radio)
+        self.parallel_radio.setChecked(True)
+
+        slider_layout = QHBoxLayout()
+        slider_layout.addWidget(QLabel('Frequency:'))
+        slider_layout.addWidget(self.slider)
+
+        filter_type_layout = QHBoxLayout()
+        filter_type_layout.addWidget(QLabel('Filter Type:'))
+        filter_type_layout.addWidget(self.parallel_radio)
+        filter_type_layout.addWidget(self.cascade_radio)
+
         layout = QVBoxLayout()
         layout.addWidget(self.load_button)
+        layout.addLayout(slider_layout)
+        layout.addLayout(filter_type_layout)
+        layout.addWidget(self.apply_button)
         layout.addWidget(self.canvas)
 
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
 
+        self.samples = None
+        self.frame_rate = None
+
     def load_audio(self):
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(self, "Load Audio File", "", "Audio Files (*.wav *.mp3 *.flac)", options=options)
         if file_path:
             self.audio_preprocessor = AudioPreprocessor(file_path)
-            samples, frame_rate = self.audio_preprocessor.process_audio()
-            self.plot_spectrum(samples, frame_rate)
+            self.samples, self.frame_rate = self.audio_preprocessor.process_audio()
+            self.plot_spectrum(self.samples, self.frame_rate)
 
     def plot_spectrum(self, samples, frame_rate):
         N = len(samples)
@@ -51,3 +86,14 @@ class GraphicEqualizer(QMainWindow):
         self.canvas.ax.set_title('Frequency Spectrum')
 
         self.canvas.draw()
+
+    def apply_filter(self):
+        if self.samples is not None:
+            frequency = self.slider.value()
+            if self.parallel_radio.isChecked():
+                filter = ParallelFilter(frequency)
+            else:
+                filter = CascadeFilter(frequency)
+
+            filtered_samples = filter.apply(self.samples, self.frame_rate)
+            self.plot_spectrum(filtered_samples, self.frame_rate)
