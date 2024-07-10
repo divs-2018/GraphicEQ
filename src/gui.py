@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QRadioButton, QButtonGroup
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QRadioButton, QButtonGroup, QGridLayout, QFrame
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -18,7 +18,7 @@ class GraphicEqualizer(QMainWindow):
         super().__init__()
 
         self.setWindowTitle('Graphic Equalizer')
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 1000, 800)
 
         self.canvas = MplCanvas(self, width=8, height=6, dpi=100)
 
@@ -28,12 +28,8 @@ class GraphicEqualizer(QMainWindow):
         self.apply_button = QPushButton('Apply Filter')
         self.apply_button.clicked.connect(self.apply_filter)
 
-        self.slider = QSlider(Qt.Horizontal)
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(10000)
-        self.slider.setValue(1000)
-        self.slider.setTickPosition(QSlider.TicksBelow)
-        self.slider.setTickInterval(1000)
+        self.save_button = QPushButton('Save Processed Audio')
+        self.save_button.clicked.connect(self.save_audio)
 
         self.filter_type_group = QButtonGroup(self)
         self.parallel_radio = QRadioButton('Parallel')
@@ -42,20 +38,41 @@ class GraphicEqualizer(QMainWindow):
         self.filter_type_group.addButton(self.cascade_radio)
         self.parallel_radio.setChecked(True)
 
-        slider_layout = QHBoxLayout()
-        slider_layout.addWidget(QLabel('Frequency:'))
-        slider_layout.addWidget(self.slider)
-
         filter_type_layout = QHBoxLayout()
         filter_type_layout.addWidget(QLabel('Filter Type:'))
         filter_type_layout.addWidget(self.parallel_radio)
         filter_type_layout.addWidget(self.cascade_radio)
 
+        self.frequencies = [60, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]
+        self.gain_sliders = []
+
+        sliders_layout = QHBoxLayout()
+        for freq in self.frequencies:
+            slider_container = QVBoxLayout()
+
+            label = QLabel(f'{freq} Hz')
+            label.setAlignment(Qt.AlignCenter)
+
+            slider = QSlider(Qt.Vertical)
+            slider.setMinimum(-12)
+            slider.setMaximum(12)
+            slider.setValue(0)
+            slider.setTickPosition(QSlider.TicksBothSides)
+            slider.setTickInterval(1)
+            slider.setFixedWidth(50)
+
+            slider_container.addWidget(label)
+            slider_container.addWidget(slider)
+            sliders_layout.addLayout(slider_container)
+
+            self.gain_sliders.append(slider)
+
         layout = QVBoxLayout()
         layout.addWidget(self.load_button)
-        layout.addLayout(slider_layout)
         layout.addLayout(filter_type_layout)
+        layout.addLayout(sliders_layout)
         layout.addWidget(self.apply_button)
+        layout.addWidget(self.save_button)
         layout.addWidget(self.canvas)
 
         container = QWidget()
@@ -89,11 +106,19 @@ class GraphicEqualizer(QMainWindow):
 
     def apply_filter(self):
         if self.samples is not None:
-            frequency = self.slider.value()
+            gains = [slider.value() for slider in self.gain_sliders]
             if self.parallel_radio.isChecked():
-                filter = ParallelFilter(frequency)
+                filter = ParallelFilter(self.frequencies, gains)
             else:
-                filter = CascadeFilter(frequency)
+                filter = CascadeFilter(self.frequencies, gains)
 
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)
+            self.filtered_samples = filtered_samples
+
+    def save_audio(self):
+        if self.filtered_samples is not None:
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save Processed Audio", "", "WAV Files (*.wav)", options=options)
+            if file_path:
+                self.audio_preprocessor.save_audio(self.filtered_samples, self.frame_rate, file_path)

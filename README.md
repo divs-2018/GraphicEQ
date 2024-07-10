@@ -4,7 +4,7 @@
 ###  pip Installs
 First install the following :
 ```
-pip install pydub numpy matplotlib scipy PyQt5
+pip install pydub numpy matplotlib scipy PyQt5 soundfile
 ```
 
 
