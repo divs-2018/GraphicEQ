@@ -43,7 +43,7 @@ class GraphicEqualizer(QMainWindow):
         filter_type_layout.addWidget(self.parallel_radio)
         filter_type_layout.addWidget(self.cascade_radio)
 
-        self.frequencies = [60, 125, 250, 500, 1000, 2000, 4000, 8000, 16000]
+        self.frequencies = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
         self.gain_sliders = []
 
         sliders_layout = QHBoxLayout()
