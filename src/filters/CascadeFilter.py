@@ -1,4 +1,4 @@
-from src.filters.EqualizingFilter import MultiFilter
+from src.filters.EqualizingFilter import EqualizingFilter
 import numpy as np
 
 class CascadeFilter(EqualizingFilter):
