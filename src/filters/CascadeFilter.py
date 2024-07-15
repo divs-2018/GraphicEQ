@@ -1,9 +1,9 @@
-from .filter import Filter
+from src.filters.MultiFilter import MultiFilter
 import numpy as np
 
-class CascadeFilter(Filter):
-    def __init__(self, frequencies, gains):
-        super().__init__(frequencies, gains)
+class CascadeFilter(MultiFilter):
+    def __init__(self, control_frequencies, gains):
+        super().__init__(control_frequencies, gains)
 
     def apply(self, samples, frame_rate):
         filtered_samples = samples

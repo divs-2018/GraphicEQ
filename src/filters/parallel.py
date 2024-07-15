@@ -1,8 +1,8 @@
-from .filter import Filter
+from src.filters.MultiFilter import MultiFilter
 import numpy as np
 import math
 
-class ParallelFilter(Filter):
+class ParallelFilter(MultiFilter):
     def __init__(self, control_frequencies, gains):
         super().__init__(control_frequencies, gains)
 
