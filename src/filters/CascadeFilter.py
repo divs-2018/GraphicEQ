@@ -1,7 +1,7 @@
-from src.filters.MultiFilter import MultiFilter
+from src.filters.EqualizingFilter import MultiFilter
 import numpy as np
 
-class CascadeFilter(MultiFilter):
+class CascadeFilter(EqualizingFilter):
     def __init__(self, control_frequencies, gains):
         super().__init__(control_frequencies, gains)
 

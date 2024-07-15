@@ -1,8 +1,8 @@
-from src.filters.MultiFilter import MultiFilter
+from src.filters.EqualizingFilter import MultiFilter
 import numpy as np
 import math
 
-class ParallelFilter(MultiFilter):
+class ParallelFilter(EqualizingFilter):
     def __init__(self, control_frequencies, gains):
         super().__init__(control_frequencies, gains)
 
