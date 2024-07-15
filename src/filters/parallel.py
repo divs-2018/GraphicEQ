@@ -3,16 +3,16 @@ import numpy as np
 import math
 
 class ParallelFilter(Filter):
-    def __init__(self, frequencies, gains):
-        super().__init__(frequencies, gains)
+    def __init__(self, control_frequencies, gains):
+        super().__init__(control_frequencies, gains)
 
     def apply(self, samples, frame_rate):
         fft_samples = np.fft.fft(samples)
         freqs = np.fft.fftfreq(len(fft_samples), 1.0/frame_rate)
 
-        N_umBands = len(self.frequencies)
-        f_LBoundHz = self.frequencies[0]
-        f_UBoundHz = self.frequencies[-1]
+        N_umBands = len(self.control_frequencies)
+        f_LBoundHz = self.control_frequencies[0]
+        f_UBoundHz = self.control_frequencies[-1]
         R = (f_UBoundHz / f_LBoundHz)**(1 / N_umBands)
 
         def safe_log(x):

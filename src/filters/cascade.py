@@ -7,7 +7,7 @@ class CascadeFilter(Filter):
 
     def apply(self, samples, frame_rate):
         filtered_samples = samples
-        for frequency, gain in zip(self.frequencies, self.gains):
+        for frequency, gain in zip(self.control_frequencies, self.gains):
             if gain != 0:
                 gain_factor = 10**(gain/20)
                 fft_samples = np.fft.fft(filtered_samples)

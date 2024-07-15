@@ -43,14 +43,14 @@ class GraphicEqualizer(QMainWindow):
         filter_type_layout.addWidget(self.parallel_radio)
         filter_type_layout.addWidget(self.cascade_radio)
 
-        self.frequencies = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
+        self.control_frequencies = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
         self.gain_sliders = []
 
         sliders_layout = QHBoxLayout()
-        for freq in self.frequencies:
+        for con_freq in self.control_frequencies:
             slider_container = QVBoxLayout()
 
-            label = QLabel(f'{freq} Hz')
+            label = QLabel(f'{con_freq} Hz')
             label.setAlignment(Qt.AlignCenter)
 
             slider = QSlider(Qt.Vertical)
@@ -108,9 +108,9 @@ class GraphicEqualizer(QMainWindow):
         if self.samples is not None:
             gains = [slider.value() for slider in self.gain_sliders]
             if self.parallel_radio.isChecked():
-                filter = ParallelFilter(self.frequencies, gains)
+                filter = ParallelFilter(self.control_frequencies, gains)
             else:
-                filter = CascadeFilter(self.frequencies, gains)
+                filter = CascadeFilter(self.control_frequencies, gains)
 
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)
