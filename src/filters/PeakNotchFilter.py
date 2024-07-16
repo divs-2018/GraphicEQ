@@ -1,6 +1,5 @@
 
 import numpy as np
-import math
 
 from src.filters.Filter import Filter
 
@@ -11,16 +10,7 @@ class PeakNotchFilter(Filter):
         self.centre_freq_Hz = centre_freq_Hz
         self.horiz_scale = horiz_scale
 
-    def H_peakNotch(self, f, gain, centre_freq_Hz, horiz_scale):
-        freq_ratio = np.abs(f / centre_freq_Hz)
-        return 1 + (gain - 1) / np.pow(freq_ratio, horiz_scale * np.log10(freq_ratio))
-    
-    def apply(self, samples, frame_rate):
-        fft_samples = np.fft.fft(samples)
-        freqs = np.fft.fftfreq(len(fft_samples), 1.0 / frame_rate)
-        
-        filtered_fft_samples = fft_samples * self.H_peakNotch(freqs, self.gain, self.centre_freq_Hz, self.horiz_scale)
-        
-        filtered_samples = np.fft.ifft(filtered_fft_samples)
-
-        return np.real(filtered_samples)
+    # H(f)
+    def frequency_response(self, f):
+        freq_ratio = np.abs(f / self.centre_freq_Hz)
+        return 1 + (self.gain - 1) / np.power(freq_ratio, self.horiz_scale * np.log10(freq_ratio))
