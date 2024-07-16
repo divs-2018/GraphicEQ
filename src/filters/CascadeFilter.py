@@ -13,20 +13,28 @@ class CascadeFilter(EqualizingFilter):
         self.num_bands = len(control_frequencies)
         self.sub_filters = []
         
+        
         # Low Shelf
+        low_shelf_cross_over_freq = np.sqrt(
+            control_frequencies[0] * control_frequencies[1]
+        )
         self.sub_filters.append(
             ShelfFilter(
                 gains[0],
-                control_frequencies[0],
+                low_shelf_cross_over_freq,
                 horiz_scale
             )
         )
 
         # High Shelf
+        high_shelf_cross_over_freq = np.sqrt(
+            control_frequencies[-1] *
+            control_frequencies[-2]
+        )
         self.sub_filters.append(
             ShelfFilter(
                 gains[-1],
-                control_frequencies[-1],
+                high_shelf_cross_over_freq,
                 -horiz_scale
             )
         )

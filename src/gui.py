@@ -115,7 +115,7 @@ class GraphicEqualizer(QMainWindow):
             if self.parallel_radio.isChecked():
                 filter = ParallelFilter(self.control_frequencies, gains)
             else:
-                filter = CascadeFilter(self.control_frequencies, gains, 10)
+                filter = CascadeFilter(self.control_frequencies, gains, 20)
 
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)
