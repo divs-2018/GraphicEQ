@@ -111,7 +111,7 @@ class GraphicEqualizer(QMainWindow):
         if self.samples is not None:
             gains_dB = [slider.value() for slider in self.gain_dB_sliders]
             gains_B = [gain_dB / 10 for gain_dB in gains_dB]
-            gains = np.pow(10, gains_B)
+            gains = np.power(10, gains_B)
             if self.parallel_radio.isChecked():
                 filter = ParallelFilter(self.control_frequencies, gains)
             else:

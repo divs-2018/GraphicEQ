@@ -12,8 +12,7 @@ class CascadeFilter(EqualizingFilter):
         self.horiz_scale = horiz_scale
         self.num_bands = len(control_frequencies)
         self.sub_filters = []
-        
-        
+
         # Low Shelf
         low_shelf_cross_over_freq = np.sqrt(
             control_frequencies[0] * control_frequencies[1]
@@ -49,10 +48,11 @@ class CascadeFilter(EqualizingFilter):
                 )
             )
 
-    def apply(self, samples, frame_rate):
-        filtered_samples = samples
+    # H(f)
+    def frequency_response(self, f):
+        return_val = 1
 
         for i in range(0, self.num_bands):
-            filtered_samples = self.sub_filters[i].apply(filtered_samples, frame_rate)
+            return_val *= self.sub_filters[i].frequency_response(f)
 
-        return filtered_samples
+        return return_val
