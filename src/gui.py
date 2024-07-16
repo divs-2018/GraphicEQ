@@ -5,7 +5,9 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from src.preprocessing import AudioPreprocessor
 from src.filters.parallel import ParallelFilter
-from src.filters.cascade import CascadeFilter
+from src.filters.CascadeFilter import CascadeFilter
+from src.filters.ShelfFilter import ShelfFilter
+from src.filters.PeakNotchFilter import PeakNotchFilter
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
@@ -43,14 +45,14 @@ class GraphicEqualizer(QMainWindow):
         filter_type_layout.addWidget(self.parallel_radio)
         filter_type_layout.addWidget(self.cascade_radio)
 
-        self.frequencies = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
-        self.gain_sliders = []
+        self.control_frequencies = [50, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
+        self.gain_dB_sliders = []
 
         sliders_layout = QHBoxLayout()
-        for freq in self.frequencies:
+        for control_freq in self.control_frequencies:
             slider_container = QVBoxLayout()
 
-            label = QLabel(f'{freq} Hz')
+            label = QLabel(f'{control_freq} Hz')
             label.setAlignment(Qt.AlignCenter)
 
             slider = QSlider(Qt.Vertical)
@@ -65,7 +67,7 @@ class GraphicEqualizer(QMainWindow):
             slider_container.addWidget(slider)
             sliders_layout.addLayout(slider_container)
 
-            self.gain_sliders.append(slider)
+            self.gain_dB_sliders.append(slider)
 
         layout = QVBoxLayout()
         layout.addWidget(self.load_button)
@@ -81,6 +83,7 @@ class GraphicEqualizer(QMainWindow):
 
         self.samples = None
         self.frame_rate = None
+        self.filtered_samples = None
 
     def load_audio(self):
         options = QFileDialog.Options()
@@ -106,11 +109,13 @@ class GraphicEqualizer(QMainWindow):
 
     def apply_filter(self):
         if self.samples is not None:
-            gains = [slider.value() for slider in self.gain_sliders]
+            gains_dB = [slider.value() for slider in self.gain_dB_sliders]
+            gains_B = [gain_dB / 10 for gain_dB in gains_dB]
+            gains = np.pow(10, gains_B)
             if self.parallel_radio.isChecked():
-                filter = ParallelFilter(self.frequencies, gains)
+                filter = ParallelFilter(self.control_frequencies, gains)
             else:
-                filter = CascadeFilter(self.frequencies, gains)
+                filter = CascadeFilter(self.control_frequencies, gains, 20)
 
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)
