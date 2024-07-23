@@ -12,5 +12,10 @@ class PeakNotchFilter(Filter):
 
     # H(f)
     def frequency_response(self, f):
-        freq_ratio = np.abs(f / self.centre_freq_Hz)
-        return 1 + (self.gain - 1) / np.power(freq_ratio, self.horiz_scale * np.log10(freq_ratio))
+        return_val = np.array([None] * len(f), dtype = 'float64')
+        return_val[0] = 1
+
+        freq_ratio = np.abs(f[1:] / self.centre_freq_Hz)
+        return_val[1:] = 1 + (self.gain - 1) / np.power(freq_ratio, self.horiz_scale * np.log10(freq_ratio))
+        
+        return return_val
