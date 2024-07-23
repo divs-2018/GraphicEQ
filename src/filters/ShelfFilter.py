@@ -12,5 +12,9 @@ class ShelfFilter(Filter):
 
     # H(f)
     def frequency_response(self, f):
-        freq_ratio = np.abs(f / self.cross_over_freq_Hz)
-        return 1 + (self.gain - 1) / (1 + np.power(freq_ratio, self.horiz_scale))
+        return_val = super().frequency_response(f)
+
+        freq_ratio = np.abs(f[1:] / self.cross_over_freq_Hz)
+        return_val[1:] = 1 + (self.gain - 1) / (1 + np.power(freq_ratio, self.horiz_scale))
+        
+        return return_val
