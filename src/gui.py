@@ -96,13 +96,16 @@ class GraphicEqualizer(QMainWindow):
     def plot_spectrum(self, samples, frame_rate):
         N = len(samples)
         T = 1.0 / frame_rate
-        yf = np.fft.fft(samples)
-        xf = np.linspace(0.0, 1.0/(2.0*T), N//2)
+        samples_fft = np.fft.fft(samples)
+        samples_fft_abs = 2.0 / N * np.abs(samples_fft)
+        samples_fft_dB = 10 * np.log10(samples_fft_abs)
+        freqs = np.linspace(0.0, 1.0/(2.0*T), N//2)
 
         self.canvas.ax.clear()
-        self.canvas.ax.plot(xf, 2.0/N * np.abs(yf[:N//2]))
+        self.canvas.ax.set_xscale('log')
+        self.canvas.ax.plot(freqs, samples_fft_dB[:N//2])
         self.canvas.ax.set_xlabel('Frequency (Hz)')
-        self.canvas.ax.set_ylabel('Amplitude')
+        self.canvas.ax.set_ylabel('Magnitude (dB)')
         self.canvas.ax.set_title('Frequency Spectrum')
 
         self.canvas.draw()
