@@ -27,8 +27,7 @@ class CascadeFilter(EqualizingFilter):
 
         # High Shelf
         high_shelf_cross_over_freq = np.sqrt(
-            control_frequencies[-1] *
-            control_frequencies[-2]
+            control_frequencies[-1] * control_frequencies[-2]
         )
         self.sub_filters.append(
             ShelfFilter(
@@ -52,7 +51,7 @@ class CascadeFilter(EqualizingFilter):
     def frequency_response(self, f):
         return_val = 1
 
-        for i in range(0, self.num_bands):
+        for i in range(0, len(self.sub_filters)):
             return_val *= self.sub_filters[i].frequency_response(f)
 
         return return_val
