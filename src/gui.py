@@ -129,4 +129,4 @@ class GraphicEqualizer(QMainWindow):
             options = QFileDialog.Options()
             file_path, _ = QFileDialog.getSaveFileName(self, "Save Processed Audio", "", "WAV Files (*.wav)", options=options)
             if file_path:
-                self.audio_preprocessor.save_audio(self.filtered_samples, self.frame_rate * 2, file_path) # Not sure exactly why we need to double the frame rate but we do. -KH
+                self.audio_preprocessor.save_audio(self.filtered_samples, self.frame_rate, file_path)
