@@ -5,7 +5,7 @@ class Filter:
 
     # H(f)
     def frequency_response(self, f):
-        return 1
+        return np.array([1] * len(f), dtype = 'float64')
 
     def apply(self, samples, frame_rate):
         fft_samples = np.fft.fft(samples)
