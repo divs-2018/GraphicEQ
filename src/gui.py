@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from src.preprocessing import AudioPreprocessor
-from src.filters.parallel import ParallelFilter
+from src.filters.ParallelFilter import ParallelFilter
 from src.filters.CascadeFilter import CascadeFilter
 from src.filters.ShelfFilter import ShelfFilter
 from src.filters.PeakNotchFilter import PeakNotchFilter
@@ -116,7 +116,7 @@ class GraphicEqualizer(QMainWindow):
             gains_B = [gain_dB / 10 for gain_dB in gains_dB]
             gains = np.power(10, gains_B)
             if self.parallel_radio.isChecked():
-                filter = ParallelFilter(self.control_frequencies, gains)
+                filter = ParallelFilter(self.control_frequencies, gains, 20)
             else:
                 filter = CascadeFilter(self.control_frequencies, gains, 20)
 

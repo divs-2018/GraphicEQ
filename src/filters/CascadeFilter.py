@@ -21,7 +21,8 @@ class CascadeFilter(EqualizingFilter):
             ShelfFilter(
                 gains[0],
                 low_shelf_cross_over_freq,
-                horiz_scale
+                horiz_scale,
+                True
             )
         )
 
@@ -33,7 +34,8 @@ class CascadeFilter(EqualizingFilter):
             ShelfFilter(
                 gains[-1],
                 high_shelf_cross_over_freq,
-                -horiz_scale
+                -horiz_scale,
+                True
             )
         )
 
@@ -43,7 +45,8 @@ class CascadeFilter(EqualizingFilter):
                 PeakNotchFilter(
                     gains[i],
                     control_frequencies[i],
-                    horiz_scale
+                    horiz_scale,
+                    True
                 )
             )
 
