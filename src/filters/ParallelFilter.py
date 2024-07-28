@@ -2,7 +2,8 @@
 import numpy as np
 
 from src.filters.EqualizingFilter import EqualizingFilter
-from src.filters.SidePassFilter import SidePassFilter
+from src.filters.LowPassFilter import LowPassFilter
+from src.filters.HighPassFilter import HighPassFilter
 from src.filters.BandPassFilter import BandPassFilter
 
 class ParallelFilter(EqualizingFilter):
@@ -17,7 +18,7 @@ class ParallelFilter(EqualizingFilter):
             control_frequencies[0] * control_frequencies[1]
         )
         self.sub_filters.append(
-            SidePassFilter(
+            LowPassFilter(
                 gains[0],
                 low_pass_cross_over_freq,
                 horiz_scale
@@ -29,10 +30,10 @@ class ParallelFilter(EqualizingFilter):
             control_frequencies[-1] * control_frequencies[-2]
         )
         self.sub_filters.append(
-            SidePassFilter(
+            HighPassFilter(
                 gains[-1],
                 high_pass_cross_over_freq,
-                -horiz_scale
+                horiz_scale
             )
         )
 

@@ -2,7 +2,8 @@
 import numpy as np
 
 from src.filters.EqualizingFilter import EqualizingFilter
-from src.filters.ShelfFilter import ShelfFilter
+from src.filters.LowShelfFilter import LowShelfFilter
+from src.filters.HighShelfFilter import HighShelfFilter
 from src.filters.PeakNotchFilter import PeakNotchFilter
 
 class CascadeFilter(EqualizingFilter):
@@ -17,7 +18,7 @@ class CascadeFilter(EqualizingFilter):
             control_frequencies[0] * control_frequencies[1]
         )
         self.sub_filters.append(
-            ShelfFilter(
+            LowShelfFilter(
                 gains[0],
                 low_shelf_cross_over_freq,
                 horiz_scale
@@ -29,10 +30,10 @@ class CascadeFilter(EqualizingFilter):
             control_frequencies[-1] * control_frequencies[-2]
         )
         self.sub_filters.append(
-            ShelfFilter(
+            HighShelfFilter(
                 gains[-1],
                 high_shelf_cross_over_freq,
-                -horiz_scale
+                horiz_scale
             )
         )
 

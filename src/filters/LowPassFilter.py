@@ -3,7 +3,7 @@ import numpy as np
 
 from src.filters.Filter import Filter
 
-class ShelfFilter(Filter):
+class LowPassFilter(Filter):
 
     def __init__(self, gain, cross_over_freq_Hz, horiz_scale):
         self.gain = gain
@@ -15,6 +15,6 @@ class ShelfFilter(Filter):
         return_val = super().frequency_response(f)
 
         freq_ratio = np.abs(f[1:] / self.cross_over_freq_Hz)
-        return_val[1:] = 1 + (self.gain - 1) / (1 + np.power(freq_ratio, self.horiz_scale))
+        return_val[1:] = self.gain / (1 + np.power(freq_ratio, self.horiz_scale))
 
         return return_val
