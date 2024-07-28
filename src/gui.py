@@ -4,10 +4,8 @@ from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from src.preprocessing import AudioPreprocessor
-from src.filters.ParallelFilter import ParallelFilter
-from src.filters.CascadeFilter import CascadeFilter
-from src.filters.ShelfFilter import ShelfFilter
-from src.filters.PeakNotchFilter import PeakNotchFilter
+from src.filters.equalizing.ParallelFilter import ParallelFilter
+from src.filters.equalizing.CascadeFilter import CascadeFilter
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
@@ -104,6 +102,7 @@ class GraphicEqualizer(QMainWindow):
         self.canvas.ax.clear()
         self.canvas.ax.set_xscale('log')
         self.canvas.ax.plot(freqs, samples_fft_dB[:N//2])
+        self.canvas.ax.set_ybound(-50, 50)
         self.canvas.ax.set_xlabel('Frequency (Hz)')
         self.canvas.ax.set_ylabel('Magnitude (dB)')
         self.canvas.ax.set_title('Frequency Spectrum')
@@ -116,9 +115,11 @@ class GraphicEqualizer(QMainWindow):
             gains_B = [gain_dB / 10 for gain_dB in gains_dB]
             gains = np.power(10, gains_B)
             if self.parallel_radio.isChecked():
-                filter = ParallelFilter(self.control_frequencies, gains, 20)
+                parallel_horiz_scale = 15
+                filter = ParallelFilter(self.control_frequencies, gains, parallel_horiz_scale)
             else:
-                filter = CascadeFilter(self.control_frequencies, gains, 20)
+                cascade_horiz_scale = 20
+                filter = CascadeFilter(self.control_frequencies, gains, cascade_horiz_scale)
 
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)
