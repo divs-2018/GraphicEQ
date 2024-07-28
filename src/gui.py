@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QRadioButton, QButtonGroup, QGridLayout, QFrame
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QSlider, QRadioButton, QButtonGroup, QFrame, QGridLayout
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -26,9 +26,11 @@ class GraphicEqualizer(QMainWindow):
         self.load_button.clicked.connect(self.load_audio)
 
         self.apply_button = QPushButton('Apply Filter')
+        self.apply_button.setEnabled(False)
         self.apply_button.clicked.connect(self.apply_filter)
 
         self.save_button = QPushButton('Save Processed Audio')
+        self.save_button.setEnabled(False)
         self.save_button.clicked.connect(self.save_audio)
 
         self.filter_type_group = QButtonGroup(self)
@@ -59,16 +61,33 @@ class GraphicEqualizer(QMainWindow):
             slider.setValue(0)
             slider.setTickPosition(QSlider.TicksBothSides)
             slider.setTickInterval(1)
-            slider.setFixedWidth(50)
+            slider.setFixedWidth(60)  # Increased slider width
+            slider.setFixedHeight(200)  # Increased slider height
+
+            min_label = QLabel('-12')
+            min_label.setAlignment(Qt.AlignCenter)
+
+            max_label = QLabel('12')
+            max_label.setAlignment(Qt.AlignCenter)
 
             slider_container.addWidget(label)
+            slider_container.addWidget(max_label)
             slider_container.addWidget(slider)
+            slider_container.addWidget(min_label)
             sliders_layout.addLayout(slider_container)
 
             self.gain_dB_sliders.append(slider)
 
+        self.status_label = QLabel('Load an audio file to get started.')
+        self.status_label.setAlignment(Qt.AlignCenter)
+
+        self.loaded_file_label = QLabel('')
+        self.loaded_file_label.setAlignment(Qt.AlignCenter)
+
         layout = QVBoxLayout()
         layout.addWidget(self.load_button)
+        layout.addWidget(self.status_label)
+        layout.addWidget(self.loaded_file_label)
         layout.addLayout(filter_type_layout)
         layout.addLayout(sliders_layout)
         layout.addWidget(self.apply_button)
@@ -90,6 +109,9 @@ class GraphicEqualizer(QMainWindow):
             self.audio_preprocessor = AudioPreprocessor(file_path)
             self.samples, self.frame_rate = self.audio_preprocessor.process_audio()
             self.plot_spectrum(self.samples, self.frame_rate)
+            self.status_label.setText('Audio file loaded. You can now apply filters.')
+            self.loaded_file_label.setText(f'Loaded File: {file_path}')
+            self.apply_button.setEnabled(True)
 
     def plot_spectrum(self, samples, frame_rate):
         N = len(samples)
@@ -124,6 +146,8 @@ class GraphicEqualizer(QMainWindow):
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)
             self.filtered_samples = filtered_samples
+            self.status_label.setText('Filter applied. You can now save the processed audio.')
+            self.save_button.setEnabled(True)
 
     def save_audio(self):
         if self.filtered_samples is not None:
@@ -131,3 +155,11 @@ class GraphicEqualizer(QMainWindow):
             file_path, _ = QFileDialog.getSaveFileName(self, "Save Processed Audio", "", "WAV Files (*.wav)", options=options)
             if file_path:
                 self.audio_preprocessor.save_audio(self.filtered_samples, self.frame_rate, file_path)
+                self.status_label.setText('Processed audio saved.')
+
+# Example usage
+# if __name__ == '__main__':
+#     app = QApplication([])
+#     window = GraphicEqualizer()
+#     window.show()
+#     app.exec_()
