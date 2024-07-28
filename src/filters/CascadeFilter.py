@@ -10,7 +10,6 @@ class CascadeFilter(EqualizingFilter):
     def __init__(self, control_frequencies, gains, horiz_scale):
         super().__init__(control_frequencies, gains)
         self.horiz_scale = horiz_scale
-        self.num_bands = len(control_frequencies)
         self.sub_filters = []
 
         # Low Shelf
@@ -21,8 +20,7 @@ class CascadeFilter(EqualizingFilter):
             ShelfFilter(
                 gains[0],
                 low_shelf_cross_over_freq,
-                horiz_scale,
-                True
+                horiz_scale
             )
         )
 
@@ -34,8 +32,7 @@ class CascadeFilter(EqualizingFilter):
             ShelfFilter(
                 gains[-1],
                 high_shelf_cross_over_freq,
-                -horiz_scale,
-                True
+                -horiz_scale
             )
         )
 
@@ -45,8 +42,7 @@ class CascadeFilter(EqualizingFilter):
                 PeakNotchFilter(
                     gains[i],
                     control_frequencies[i],
-                    horiz_scale,
-                    True
+                    horiz_scale
                 )
             )
 

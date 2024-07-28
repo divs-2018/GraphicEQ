@@ -6,8 +6,6 @@ from matplotlib.figure import Figure
 from src.preprocessing import AudioPreprocessor
 from src.filters.ParallelFilter import ParallelFilter
 from src.filters.CascadeFilter import CascadeFilter
-from src.filters.ShelfFilter import ShelfFilter
-from src.filters.PeakNotchFilter import PeakNotchFilter
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
@@ -104,6 +102,7 @@ class GraphicEqualizer(QMainWindow):
         self.canvas.ax.clear()
         self.canvas.ax.set_xscale('log')
         self.canvas.ax.plot(freqs, samples_fft_dB[:N//2])
+        self.canvas.ax.set_ybound(-50, 50)
         self.canvas.ax.set_xlabel('Frequency (Hz)')
         self.canvas.ax.set_ylabel('Magnitude (dB)')
         self.canvas.ax.set_title('Frequency Spectrum')
