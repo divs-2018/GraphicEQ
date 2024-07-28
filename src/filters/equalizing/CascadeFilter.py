@@ -49,7 +49,7 @@ class CascadeFilter(EqualizingFilter):
 
     # H(f)
     def frequency_response(self, f):
-        return_val = super().frequency_response(f)
+        return_val = np.zeros(len(f), dtype = 'float64') + 1
 
         for i in range(0, len(self.sub_filters)):
             return_val *= self.sub_filters[i].frequency_response(f)

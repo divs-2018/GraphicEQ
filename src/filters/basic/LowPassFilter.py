@@ -12,7 +12,7 @@ class LowPassFilter(Filter):
 
     # H(f)
     def frequency_response(self, f):
-        return_val = super().frequency_response(f)
+        return_val = np.zeros(len(f), dtype = 'float64')
 
         freq_ratio = np.abs(f[1:] / self.cross_over_freq_Hz)
         return_val[1:] = self.gain / (1 + np.power(freq_ratio, self.horiz_scale))
