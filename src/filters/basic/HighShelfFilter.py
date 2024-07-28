@@ -1,5 +1,5 @@
 
-from src.filters.LowShelfFilter import LowShelfFilter
+from src.filters.basic.LowShelfFilter import LowShelfFilter
 
 class HighShelfFilter(LowShelfFilter):
 

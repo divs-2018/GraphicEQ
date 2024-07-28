@@ -4,8 +4,8 @@ from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from src.preprocessing import AudioPreprocessor
-from src.filters.ParallelFilter import ParallelFilter
-from src.filters.CascadeFilter import CascadeFilter
+from src.filters.equalizing.ParallelFilter import ParallelFilter
+from src.filters.equalizing.CascadeFilter import CascadeFilter
 
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None, width=5, height=4, dpi=100):

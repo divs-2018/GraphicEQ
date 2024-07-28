@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from src.filters.BandPassFilter import BandPassFilter
+from src.filters.basic.BandPassFilter import BandPassFilter
 
 class PeakNotchFilter(BandPassFilter):
 

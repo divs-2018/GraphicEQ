@@ -1,5 +1,5 @@
 
-from src.filters.LowPassFilter import LowPassFilter
+from src.filters.basic.LowPassFilter import LowPassFilter
 
 class HighPassFilter(LowPassFilter):
 
