@@ -49,6 +49,26 @@ class GraphicEqualizer(QMainWindow):
         self.gain_dB_sliders = []
 
         sliders_layout = QHBoxLayout()
+
+        label_layout = QVBoxLayout()
+
+        # Add dB level labels with fixed width
+        empty_label = QLabel('')
+        empty_label.setFixedWidth(40)  # Adjust this width as needed
+        label_layout.addWidget(empty_label)
+        minus12_label = QLabel('-12 dB', alignment=Qt.AlignCenter)
+        minus12_label.setFixedWidth(40)  # Adjust this width as needed
+        label_layout.addWidget(minus12_label)
+        label_layout.addStretch(1)
+        zero_label = QLabel('0 dB', alignment=Qt.AlignCenter)
+        zero_label.setFixedWidth(40)  # Adjust this width as needed
+        label_layout.addWidget(zero_label)
+        label_layout.addStretch(1)
+        plus12_label = QLabel('12 dB', alignment=Qt.AlignCenter)
+        plus12_label.setFixedWidth(40)  # Adjust this width as needed
+        label_layout.addWidget(plus12_label)
+
+        sliders_layout.addLayout(label_layout)
         for control_freq in self.control_frequencies:
             slider_container = QVBoxLayout()
 
@@ -64,16 +84,8 @@ class GraphicEqualizer(QMainWindow):
             slider.setFixedWidth(60)  # Increased slider width
             slider.setFixedHeight(200)  # Increased slider height
 
-            min_label = QLabel('-12')
-            min_label.setAlignment(Qt.AlignCenter)
-
-            max_label = QLabel('12')
-            max_label.setAlignment(Qt.AlignCenter)
-
             slider_container.addWidget(label)
-            slider_container.addWidget(max_label)
             slider_container.addWidget(slider)
-            slider_container.addWidget(min_label)
             sliders_layout.addLayout(slider_container)
 
             self.gain_dB_sliders.append(slider)
