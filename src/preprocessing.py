@@ -14,11 +14,11 @@ class AudioPreprocessor:
         return samples, audio.frame_rate
 
     def save_audio(self, samples, frame_rate, file_path):
-        max_sample = max(samples)
+        max_sample_magnitude = max(np.abs(samples))
 
         # Scale down samples if over max
-        if(max_sample > (np.iinfo(np.int16)).max):
-            scale = ((np.iinfo(np.int16)).max - 1) / max_sample
+        if(max_sample_magnitude > (np.iinfo(np.int16)).max):
+            scale = ((np.iinfo(np.int16)).max - 1) / max_sample_magnitude
             samples *= scale
             
         samples = samples.astype(np.int16)
