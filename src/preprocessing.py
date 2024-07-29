@@ -14,5 +14,12 @@ class AudioPreprocessor:
         return samples, audio.frame_rate
 
     def save_audio(self, samples, frame_rate, file_path):
+        max_sample = max(samples)
+
+        # Scale down samples if over max
+        if(max_sample > (np.iinfo(np.int16)).max):
+            ratio = (np.iinfo(np.int16)).max / max_sample
+            samples *= ratio
+            
         samples = samples.astype(np.int16)
         sf.write(file_path, samples, frame_rate)
