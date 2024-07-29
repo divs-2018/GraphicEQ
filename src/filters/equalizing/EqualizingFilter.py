@@ -1,6 +1,4 @@
 
-import numpy as np
-
 from src.filters.Filter import Filter
 
 class EqualizingFilter(Filter):
