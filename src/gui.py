@@ -136,12 +136,15 @@ class GraphicEqualizer(QMainWindow):
             gains_dB = [slider.value() for slider in self.gain_dB_sliders]
             gains_B = [gain_dB / 10 for gain_dB in gains_dB]
             gains = np.power(10, gains_B)
+
             if self.parallel_radio.isChecked():
                 parallel_horiz_scale = 15
-                filter = ParallelFilter(self.control_frequencies, gains, parallel_horiz_scale)
+                parallel_cutoff_ratio = 0.5
+                filter = ParallelFilter(self.control_frequencies, gains, parallel_horiz_scale, parallel_cutoff_ratio)
             else:
                 cascade_horiz_scale = 20
-                filter = CascadeFilter(self.control_frequencies, gains, cascade_horiz_scale)
+                cascade_cutoff_ratio = 0.4
+                filter = CascadeFilter(self.control_frequencies, gains, cascade_horiz_scale, cascade_cutoff_ratio)
 
             filtered_samples = filter.apply(self.samples, self.frame_rate)
             self.plot_spectrum(filtered_samples, self.frame_rate)

@@ -8,9 +8,10 @@ from src.filters.basic.PeakNotchFilter import PeakNotchFilter
 
 class CascadeFilter(EqualizingFilter):
 
-    def __init__(self, control_frequencies, gains, horiz_scale):
+    def __init__(self, control_frequencies, gains, horiz_scale, cutoff_ratio):
         super().__init__(control_frequencies, gains)
         self.horiz_scale = horiz_scale
+        self.cutoff_ratio = cutoff_ratio
         self.sub_filters = []
 
         # Low Shelf
@@ -43,7 +44,8 @@ class CascadeFilter(EqualizingFilter):
                 PeakNotchFilter(
                     gains[i],
                     control_frequencies[i],
-                    horiz_scale
+                    horiz_scale,
+                    cutoff_ratio
                 )
             )
 
