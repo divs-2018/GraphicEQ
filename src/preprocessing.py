@@ -18,8 +18,8 @@ class AudioPreprocessor:
 
         # Scale down samples if over max
         if(max_sample > (np.iinfo(np.int16)).max):
-            ratio = (np.iinfo(np.int16)).max / max_sample
-            samples *= ratio
+            scale = ((np.iinfo(np.int16)).max - 1) / max_sample
+            samples *= scale
             
         samples = samples.astype(np.int16)
         sf.write(file_path, samples, frame_rate)
